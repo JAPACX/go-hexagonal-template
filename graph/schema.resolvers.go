@@ -6,18 +6,51 @@ package graph
 
 import (
 	"context"
-	"fmt"
 	"go-gqlgen/graph/model"
 )
 
 // CreateBook is the resolver for the createBook field.
 func (r *mutationResolver) CreateBook(ctx context.Context, input model.NewBook) (*model.Book, error) {
-	panic(fmt.Errorf("not implemented: CreateBook - createBook"))
+	simulatedAuthor := &model.User{
+		ID:   input.UserID,
+		Name: input.Name,
+	}
+
+	simulatedBook := &model.Book{
+		ID:     "some-simulated-id-123",
+		Title:  input.Title,
+		Author: simulatedAuthor,
+	}
+
+	return simulatedBook, nil
 }
 
 // Books is the resolver for the books field.
 func (r *queryResolver) Books(ctx context.Context) ([]*model.Book, error) {
-	panic(fmt.Errorf("not implemented: Books - books"))
+	// Usuarios simulados
+	user1 := &model.User{
+		ID:   "simulated-user-id-1",
+		Name: "Alice",
+	}
+	user2 := &model.User{
+		ID:   "simulated-user-id-2",
+		Name: "Bob",
+	}
+
+	simulatedBooks := []*model.Book{
+		&model.Book{
+			ID:     "simulated-id-1",
+			Title:  "Simulated Book 1",
+			Author: user1,
+		},
+		&model.Book{
+			ID:     "simulated-id-2",
+			Title:  "Simulated Book 2",
+			Author: user2,
+		},
+	}
+
+	return simulatedBooks, nil
 }
 
 // Mutation returns MutationResolver implementation.
