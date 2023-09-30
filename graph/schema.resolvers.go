@@ -7,70 +7,34 @@ package graph
 import (
 	"context"
 	"errors"
-	"go-gqlgen/db/operations"
+	"fmt"
 	"go-gqlgen/graph/model"
 )
 
-// CreateBook is the resolver for the createBook field.
-func (r *mutationResolver) CreateBook(ctx context.Context, input model.NewBook) (*model.Book, error) {
-	simulatedAuthor := &model.User{
-		ID:   input.UserID,
-		Name: input.Name,
-	}
-
-	simulatedBook := &model.Book{
-		ID:     "some-simulated-id-123",
-		Title:  input.Title,
-		Author: simulatedAuthor,
-	}
-	return simulatedBook, nil
+// CreateUser is the resolver for the createUser field.
+func (r *mutationResolver) CreateUser(ctx context.Context, input model.NewUser) (*model.User, error) {
+	panic(fmt.Errorf("not implemented: CreateUser - createUser"))
 }
 
-// Books is the resolver for the books field.
-func (r *queryResolver) Books(ctx context.Context) ([]*model.Book, error) {
+// UpdateUser is the resolver for the updateUser field.
+func (r *mutationResolver) UpdateUser(ctx context.Context, input *model.UpdateUser) (*model.User, error) {
+	panic(fmt.Errorf("not implemented: UpdateUser - updateUser"))
+}
 
-	user1 := &model.User{
-		ID:   "simulated-user-id-1",
-		Name: "Alice",
-	}
-	user2 := &model.User{
-		ID:   "simulated-user-id-2",
-		Name: "Bob",
-	}
-
-	simulatedBooks := []*model.Book{
-		&model.Book{
-			ID:     "simulated-id-1",
-			Title:  "Simulated Book 1",
-			Author: user1,
-		},
-		&model.Book{
-			ID:     "simulated-id-2",
-			Title:  "Simulated Book 2",
-			Author: user2,
-		},
-	}
-
-	return simulatedBooks, nil
+// DeleteUser is the resolver for the deleteUser field.
+func (r *mutationResolver) DeleteUser(ctx context.Context, id int) (*bool, error) {
+	panic(fmt.Errorf("not implemented: DeleteUser - deleteUser"))
 }
 
 // Users is the resolver for the users field.
 func (r *queryResolver) Users(ctx context.Context) ([]*model.User, error) {
-	allUsers := operations.FetchAllUsers()
+	panic(fmt.Errorf("not implemented: Users - Users"))
+}
 
-	if len(allUsers) < 1 {
-		return nil, errors.New("not enough users")
-	}
-	var result []*model.User
-	for _, element := range allUsers {
-
-		newUser := &model.User{ID: element.Id, Name: element.Name, Email: element.Email}
-
-		result = append(result, newUser)
-
-	}
-
-	return result, nil
+// UserByID is the resolver for the userById field.
+func (r *queryResolver) UserByID(ctx context.Context, id int) (*model.User, error) {
+	fmt.Println(id)
+	return nil, errors.New("hello")
 }
 
 // Mutation returns MutationResolver implementation.
