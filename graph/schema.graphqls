@@ -1,24 +1,25 @@
 type Book {
-id: ID!
-title: String!
-author: User!
+    id: ID!
+    title: String!
+    author: User!
 }
 
 type User {
-id: ID!
-name: String!
+    id: ID!
+    name: String!
+
 }
 
 type Query {
-books: [Book!]!
+    books: [Book!]!
 }
 
 input NewBook {
-title: String!
-userId: String!
-name: String!
+    title: String!
+    userId: String!
+    name: String!
 }
 
 type Mutation {
-createBook(input: NewBook!): Book!
+    createBook(input: NewBook!): Book!
 }

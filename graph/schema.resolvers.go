@@ -6,6 +6,7 @@ package graph
 
 import (
 	"context"
+	"go-gqlgen/db/operations"
 	"go-gqlgen/graph/model"
 )
 
@@ -21,7 +22,7 @@ func (r *mutationResolver) CreateBook(ctx context.Context, input model.NewBook) 
 		Title:  input.Title,
 		Author: simulatedAuthor,
 	}
-
+	operations.FetchAllUsers()
 	return simulatedBook, nil
 }
 
