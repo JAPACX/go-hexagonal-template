@@ -7,11 +7,13 @@ type Book {
 type User {
     id: ID!
     name: String!
+    email: String!
 
 }
 
 type Query {
     books: [Book!]!
+    users: [User!]!
 }
 
 input NewBook {

@@ -6,6 +6,7 @@ package graph
 
 import (
 	"context"
+	"errors"
 	"go-gqlgen/db/operations"
 	"go-gqlgen/graph/model"
 )
@@ -22,13 +23,12 @@ func (r *mutationResolver) CreateBook(ctx context.Context, input model.NewBook) 
 		Title:  input.Title,
 		Author: simulatedAuthor,
 	}
-	operations.FetchAllUsers()
 	return simulatedBook, nil
 }
 
 // Books is the resolver for the books field.
 func (r *queryResolver) Books(ctx context.Context) ([]*model.Book, error) {
-	// Usuarios simulados
+
 	user1 := &model.User{
 		ID:   "simulated-user-id-1",
 		Name: "Alice",
@@ -52,6 +52,25 @@ func (r *queryResolver) Books(ctx context.Context) ([]*model.Book, error) {
 	}
 
 	return simulatedBooks, nil
+}
+
+// Users is the resolver for the users field.
+func (r *queryResolver) Users(ctx context.Context) ([]*model.User, error) {
+	allUsers := operations.FetchAllUsers()
+
+	if len(allUsers) < 1 {
+		return nil, errors.New("not enough users")
+	}
+	var result []*model.User
+	for _, element := range allUsers {
+
+		newUser := &model.User{ID: element.Id, Name: element.Name, Email: element.Email}
+
+		result = append(result, newUser)
+
+	}
+
+	return result, nil
 }
 
 // Mutation returns MutationResolver implementation.

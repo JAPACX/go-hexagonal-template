@@ -27,7 +27,7 @@ func CreateUser(u User) {
 	fmt.Println("User created successfully!")
 }
 
-func FetchAllUsers() {
+func FetchAllUsers() []User {
 	var users []User
 
 	query := "SELECT id, name, email, updated_at, created_at FROM users"
@@ -44,12 +44,12 @@ func FetchAllUsers() {
 			log.Fatalf("Error scanning row: %v", err)
 		}
 		users = append(users, u)
-		fmt.Printf("ID: %s, Name: %s, Email: %s, UpdatedAt: %v, CreatedAt: %v\n", u.Id, u.Name, u.Email, u.UpdatedAt, u.CreatedAt)
 	}
 
 	if err := rows.Err(); err != nil {
 		log.Fatalf("Error during rows iteration: %v", err)
 	}
+	return users
 }
 
 func UpdateUserEmail(id string, newEmail string) {
