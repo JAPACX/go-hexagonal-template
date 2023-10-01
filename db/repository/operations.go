@@ -4,27 +4,20 @@ import (
 	"context"
 	"fmt"
 	"github.com/jackc/pgx/v5/pgxpool"
-	"time"
+
+	"go-gqlgen/db/entities"
 )
 
 type Repository struct {
 	Pool *pgxpool.Pool
 }
 
-type User struct {
-	Id        string
-	Name      string
-	Email     string
-	UpdatedAt time.Time
-	CreatedAt time.Time
-}
-
-func (r *Repository) CreateUser(ctx context.Context, u User) error {
+func (r *Repository) CreateUser(ctx context.Context, user entities.User) error {
 	query := `INSERT INTO users (name, email) VALUES ($1, $2)`
 
-	_, err := r.Pool.Exec(ctx, query, u.Name, u.Email)
+	_, err := r.Pool.Exec(ctx, query, user.Name, user.Email)
 	if err != nil {
-		return fmt.Errorf("Error creating user: %v", err)
+		return fmt.Errorf("error creating user: %v", err)
 	}
 	fmt.Println("User created successfully!")
 	return nil

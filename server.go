@@ -2,15 +2,14 @@ package main
 
 import (
 	"context"
+	"github.com/99designs/gqlgen/graphql/handler"
+	"github.com/99designs/gqlgen/graphql/playground"
 	"github.com/joho/godotenv"
 	"go-gqlgen/db/conn"
 	"go-gqlgen/graph"
 	"log"
 	"net/http"
 	"os"
-
-	"github.com/99designs/gqlgen/graphql/handler"
-	"github.com/99designs/gqlgen/graphql/playground"
 )
 
 func init() {
