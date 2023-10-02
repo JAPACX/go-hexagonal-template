@@ -8,28 +8,78 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	"go-gqlgen/db/entities"
+	"go-gqlgen/db/repository"
 	"go-gqlgen/graph/model"
 )
 
+// Users is the resolver for the users field.
+func (r *queryResolver) Users(ctx context.Context) ([]*model.User, error) {
+	repo := repository.GetRepository()
+	entityUsers, err := repo.Users(ctx)
+	if err != nil {
+		return nil, err
+	}
+
+	var modelUsers []*model.User
+	for _, eu := range entityUsers {
+		mu := &model.User{
+			ID:    eu.Id,
+			Name:  eu.Name,
+			Email: eu.Email,
+		}
+		modelUsers = append(modelUsers, mu)
+	}
+	return modelUsers, nil
+}
+
 // CreateUser is the resolver for the createUser field.
 func (r *mutationResolver) CreateUser(ctx context.Context, input model.NewUser) (*model.User, error) {
-	fmt.Println("hello")
-	panic(fmt.Errorf("not implemented: CreateUser - createUser"))
+	userToCreate := entities.User{
+		Name:  input.Name,
+		Email: input.Email,
+	}
+
+	repo := repository.GetRepository()
+	id, err := repo.CreateUser(ctx, userToCreate)
+	if err != nil {
+		return nil, err
+	}
+
+	return &model.User{
+		ID:    id,
+		Name:  userToCreate.Name,
+		Email: userToCreate.Email,
+	}, nil
 }
 
 // UpdateUser is the resolver for the updateUser field.
-func (r *mutationResolver) UpdateUser(ctx context.Context, input *model.UpdateUser) (*model.User, error) {
-	panic(fmt.Errorf("not implemented: UpdateUser - updateUser"))
+func (r *mutationResolver) UpdateUser(ctx context.Context, id string, input *model.UpdateUser) (*model.User, error) {
+	userToUpdate := entities.User{
+		Name:  *input.Name,
+		Email: *input.Email,
+	}
+
+	repo := repository.GetRepository()
+	if err := repo.UpdateUser(ctx, id, userToUpdate); err != nil {
+		return nil, err
+	}
+
+	return &model.User{
+		ID:    id,
+		Name:  userToUpdate.Name,
+		Email: userToUpdate.Email,
+	}, nil
 }
 
 // DeleteUser is the resolver for the deleteUser field.
-func (r *mutationResolver) DeleteUser(ctx context.Context, id int) (*bool, error) {
-	panic(fmt.Errorf("not implemented: DeleteUser - deleteUser"))
-}
-
-// Users is the resolver for the users field.
-func (r *queryResolver) Users(ctx context.Context) ([]*model.User, error) {
-	panic(fmt.Errorf("not implemented: Users - Users"))
+func (r *mutationResolver) DeleteUser(ctx context.Context, id string) (string, error) {
+	repo := repository.GetRepository()
+	_, err := repo.DeleteUser(ctx, id)
+	if err != nil {
+		return "", err
+	}
+	return fmt.Sprintf("user with id %v deleted successfully", id), nil
 }
 
 // UserByID is the resolver for the userById field.

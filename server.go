@@ -6,6 +6,7 @@ import (
 	"github.com/99designs/gqlgen/graphql/playground"
 	"github.com/joho/godotenv"
 	"go-gqlgen/db/conn"
+	"go-gqlgen/db/repository"
 	"go-gqlgen/graph"
 	"log"
 	"net/http"
@@ -20,8 +21,10 @@ func init() {
 }
 
 func main() {
+
 	ctx := context.Background()
 	pool := conn.Connect(ctx)
+	repository.InitRepository(pool)
 	defer pool.Close()
 
 	srv := handler.NewDefaultServer(graph.NewExecutableSchema(graph.Config{Resolvers: &graph.Resolver{}}))
