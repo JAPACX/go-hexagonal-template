@@ -6,32 +6,11 @@ package graph
 
 import (
 	"context"
-	"errors"
 	"fmt"
 	"go-gqlgen/db/entities"
 	"go-gqlgen/db/repository"
 	"go-gqlgen/graph/model"
 )
-
-// Users is the resolver for the users field.
-func (r *queryResolver) Users(ctx context.Context) ([]*model.User, error) {
-	repo := repository.GetRepository()
-	entityUsers, err := repo.Users(ctx)
-	if err != nil {
-		return nil, err
-	}
-
-	var modelUsers []*model.User
-	for _, eu := range entityUsers {
-		mu := &model.User{
-			ID:    eu.Id,
-			Name:  eu.Name,
-			Email: eu.Email,
-		}
-		modelUsers = append(modelUsers, mu)
-	}
-	return modelUsers, nil
-}
 
 // CreateUser is the resolver for the createUser field.
 func (r *mutationResolver) CreateUser(ctx context.Context, input model.NewUser) (*model.User, error) {
@@ -82,10 +61,43 @@ func (r *mutationResolver) DeleteUser(ctx context.Context, id string) (string, e
 	return fmt.Sprintf("user with id %v deleted successfully", id), nil
 }
 
+// Users is the resolver for the users field.
+func (r *queryResolver) Users(ctx context.Context) ([]*model.User, error) {
+	repo := repository.GetRepository()
+	entityUsers, err := repo.Users(ctx)
+	if err != nil {
+		return nil, err
+	}
+
+	var modelUsers []*model.User
+	for _, eu := range entityUsers {
+		mu := &model.User{
+			ID:    eu.Id,
+			Name:  eu.Name,
+			Email: eu.Email,
+		}
+		modelUsers = append(modelUsers, mu)
+	}
+	return modelUsers, nil
+}
+
 // UserByID is the resolver for the userById field.
-func (r *queryResolver) UserByID(ctx context.Context, id int) (*model.User, error) {
-	fmt.Println(id)
-	return nil, errors.New("hello")
+func (r *queryResolver) UserByID(ctx context.Context, id string) (*model.User, error) {
+	repo := repository.GetRepository()
+	userEntity, err := repo.UserById(ctx, id)
+	if err != nil {
+		return nil, err
+	}
+	fmt.Println(userEntity)
+
+	mu := &model.User{
+		ID:    userEntity.Id,
+		Name:  userEntity.Name,
+		Email: userEntity.Email,
+	}
+
+	return mu, err
+
 }
 
 // Mutation returns MutationResolver implementation.

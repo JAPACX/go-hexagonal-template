@@ -46,6 +46,17 @@ func (r *Repository) Users(ctx context.Context) ([]entities.User, error) {
 	return users, nil
 }
 
+func (r *Repository) UserById(ctx context.Context, id string) (entities.User, error) {
+	query := `SELECT * FROM users WHERE id = $1`
+
+	var user entities.User
+	err := r.Pool.QueryRow(ctx, query, id).Scan(&user.Id, &user.Name, &user.Email, &user.CreatedAt, &user.UpdatedAt)
+	if err != nil {
+		return user, fmt.Errorf("error fetching user by ID: %v", err)
+	}
+	return user, nil
+}
+
 func (r *Repository) CreateUser(ctx context.Context, user entities.User) (string, error) {
 	query := `INSERT INTO users (name, email) VALUES ($1, $2) RETURNING id`
 	var id string
@@ -62,9 +73,12 @@ func (r *Repository) UpdateUser(ctx context.Context, id string, user entities.Us
 	}
 
 	query := `UPDATE users SET name = $1, email = $2 WHERE id = $3`
-	_, err := r.Pool.Exec(ctx, query, user.Name, user.Email, id)
+	tag, err := r.Pool.Exec(ctx, query, user.Name, user.Email, id)
 	if err != nil {
 		return fmt.Errorf("error updating user: %v", err)
+	}
+	if tag.RowsAffected() == 0 {
+		return errors.New("user not found")
 	}
 	return nil
 }
@@ -75,9 +89,12 @@ func (r *Repository) DeleteUser(ctx context.Context, id string) (string, error) 
 	}
 
 	query := `DELETE FROM users WHERE id = $1`
-	_, err := r.Pool.Exec(ctx, query, id)
+	tag, err := r.Pool.Exec(ctx, query, id)
 	if err != nil {
 		return "", fmt.Errorf("error deleting user: %v", err)
+	}
+	if tag.RowsAffected() == 0 {
+		return "", errors.New("user not found")
 	}
 	return id, nil
 }
