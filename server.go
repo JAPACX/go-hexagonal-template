@@ -5,8 +5,8 @@ import (
 	"github.com/99designs/gqlgen/graphql/handler"
 	"github.com/99designs/gqlgen/graphql/playground"
 	"github.com/joho/godotenv"
-	"go-gqlgen/application" // Importa tu paquete de casos de uso
-	"go-gqlgen/infrastructure/db/conn"
+	"go-gqlgen/application"
+	"go-gqlgen/infrastructure/db"
 	graph "go-gqlgen/infrastructure/graph"
 	"go-gqlgen/infrastructure/repository"
 	"log"
@@ -23,7 +23,7 @@ func init() {
 
 func main() {
 	ctx := context.Background()
-	pool := conn.Connect(ctx)
+	pool := db.Connect(ctx)
 	defer pool.Close()
 
 	// Crear instancia del repositorio con el pool de conexión

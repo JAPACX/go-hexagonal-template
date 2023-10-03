@@ -60,6 +60,7 @@ func (r *mutationResolver) DeleteUser(ctx context.Context, id string) (string, e
 // Users is the resolver for the users field.
 func (r *queryResolver) Users(ctx context.Context) ([]*model.User, error) {
 	entityUsers, err := r.UserUseCase.GetUsers(ctx)
+
 	if err != nil {
 		return nil, err
 	}
