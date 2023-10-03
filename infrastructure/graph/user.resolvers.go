@@ -9,7 +9,6 @@ import (
 	"fmt"
 	"go-gqlgen/domain/entities"
 	"go-gqlgen/infrastructure/graph/model"
-	"go-gqlgen/infrastructure/repository"
 )
 
 // CreateUser is the resolver for the createUser field.
@@ -19,8 +18,7 @@ func (r *mutationResolver) CreateUser(ctx context.Context, input model.NewUser) 
 		Email: input.Email,
 	}
 
-	repo := repository.GetRepository()
-	id, err := repo.CreateUser(ctx, userToCreate)
+	id, err := r.UserUseCase.CreateUser(ctx, userToCreate)
 	if err != nil {
 		return nil, err
 	}
@@ -39,8 +37,7 @@ func (r *mutationResolver) UpdateUser(ctx context.Context, id string, input *mod
 		Email: *input.Email,
 	}
 
-	repo := repository.GetRepository()
-	if err := repo.UpdateUser(ctx, id, userToUpdate); err != nil {
+	if err := r.UserUseCase.UpdateUser(ctx, id, userToUpdate); err != nil {
 		return nil, err
 	}
 
@@ -53,8 +50,7 @@ func (r *mutationResolver) UpdateUser(ctx context.Context, id string, input *mod
 
 // DeleteUser is the resolver for the deleteUser field.
 func (r *mutationResolver) DeleteUser(ctx context.Context, id string) (string, error) {
-	repo := repository.GetRepository()
-	_, err := repo.DeleteUser(ctx, id)
+	_, err := r.UserUseCase.DeleteUser(ctx, id)
 	if err != nil {
 		return "", err
 	}
@@ -63,8 +59,7 @@ func (r *mutationResolver) DeleteUser(ctx context.Context, id string) (string, e
 
 // Users is the resolver for the users field.
 func (r *queryResolver) Users(ctx context.Context) ([]*model.User, error) {
-	repo := repository.GetRepository()
-	entityUsers, err := repo.Users(ctx)
+	entityUsers, err := r.UserUseCase.GetUsers(ctx)
 	if err != nil {
 		return nil, err
 	}
@@ -83,8 +78,8 @@ func (r *queryResolver) Users(ctx context.Context) ([]*model.User, error) {
 
 // UserByID is the resolver for the userById field.
 func (r *queryResolver) UserByID(ctx context.Context, id string) (*model.User, error) {
-	repo := repository.GetRepository()
-	userEntity, err := repo.UserById(ctx, id)
+
+	userEntity, err := r.UserUseCase.GetUserById(ctx, id)
 	if err != nil {
 		return nil, err
 	}

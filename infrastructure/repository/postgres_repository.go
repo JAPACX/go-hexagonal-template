@@ -12,14 +12,8 @@ type Repository struct {
 	Pool *pgxpool.Pool
 }
 
-var instance *Repository
-
-func InitRepository(pool *pgxpool.Pool) {
-	instance = &Repository{Pool: pool}
-}
-
-func GetRepository() *Repository {
-	return instance
+func NewRepository(pool *pgxpool.Pool) *Repository {
+	return &Repository{Pool: pool}
 }
 
 func (r *Repository) Users(ctx context.Context) ([]entities.User, error) {
