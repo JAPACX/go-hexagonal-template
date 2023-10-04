@@ -16,7 +16,7 @@ func NewRepository(pool *pgxpool.Pool) *Repository {
 	return &Repository{Pool: pool}
 }
 
-func (r *Repository) Users(ctx context.Context) ([]entities.User, error) {
+func (r *Repository) Users(ctx context.Context) (*[]entities.User, error) {
 
 	query := `select * from users`
 	rows, err := r.Pool.Query(ctx, query)
@@ -37,18 +37,18 @@ func (r *Repository) Users(ctx context.Context) ([]entities.User, error) {
 	if err = rows.Err(); err != nil {
 		return nil, fmt.Errorf("error iterating rows: %v", err)
 	}
-	return users, nil
+	return &users, nil
 }
 
-func (r *Repository) UserById(ctx context.Context, id string) (entities.User, error) {
+func (r *Repository) UserById(ctx context.Context, id string) (*entities.User, error) {
 	query := `SELECT * FROM users WHERE id = $1`
 
 	var user entities.User
 	err := r.Pool.QueryRow(ctx, query, id).Scan(&user.Id, &user.Name, &user.Email, &user.CreatedAt, &user.UpdatedAt)
 	if err != nil {
-		return user, fmt.Errorf("error fetching user by ID: %v", err)
+		return &user, fmt.Errorf("error fetching user by ID: %v", err)
 	}
-	return user, nil
+	return &user, nil
 }
 
 func (r *Repository) CreateUser(ctx context.Context, user entities.User) (string, error) {

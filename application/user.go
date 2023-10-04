@@ -14,11 +14,11 @@ func NewUserUseCase(repo repositories.UserInterface) *UserUseCase {
 	return &UserUseCase{repo: repo}
 }
 
-func (ui *UserUseCase) GetUsers(ctx context.Context) ([]entities.User, error) {
+func (ui *UserUseCase) GetUsers(ctx context.Context) (*[]entities.User, error) {
 	return ui.repo.Users(ctx)
 }
 
-func (ui *UserUseCase) GetUserById(ctx context.Context, id string) (entities.User, error) {
+func (ui *UserUseCase) GetUserById(ctx context.Context, id string) (*entities.User, error) {
 	return ui.repo.UserById(ctx, id)
 }
 

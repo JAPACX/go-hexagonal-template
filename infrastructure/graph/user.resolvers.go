@@ -66,7 +66,7 @@ func (r *queryResolver) Users(ctx context.Context) ([]*model.User, error) {
 	}
 
 	var modelUsers []*model.User
-	for _, eu := range entityUsers {
+	for _, eu := range *entityUsers {
 		mu := &model.User{
 			ID:    eu.Id,
 			Name:  eu.Name,

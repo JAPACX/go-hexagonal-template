@@ -2,6 +2,7 @@ package main
 
 import (
 	"context"
+	"fmt"
 	"github.com/99designs/gqlgen/graphql/handler"
 	"github.com/99designs/gqlgen/graphql/playground"
 	"github.com/joho/godotenv"
@@ -15,6 +16,7 @@ import (
 )
 
 func init() {
+	fmt.Println("first this ")
 	err := godotenv.Load()
 	if err != nil {
 		panic("Error loading .env file")
@@ -47,4 +49,5 @@ func main() {
 	}
 	log.Printf("connect to http://localhost:%s/ for GraphQL playground", port)
 	log.Fatal(http.ListenAndServe(":"+port, nil))
+
 }
