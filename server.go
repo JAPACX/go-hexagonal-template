@@ -7,9 +7,9 @@ import (
 	"github.com/99designs/gqlgen/graphql/playground"
 	"github.com/joho/godotenv"
 	"go-gqlgen/application"
+	graph "go-gqlgen/infrastructure/api/graph/generated"
 	resolvers2 "go-gqlgen/infrastructure/api/graph/resolvers"
 	"go-gqlgen/infrastructure/db/connect"
-	graph "go-gqlgen/infrastructure/graph"
 	"go-gqlgen/infrastructure/repository"
 	"log"
 	"net/http"
@@ -29,16 +29,18 @@ func main() {
 	pool := connect.Connect(ctx)
 	defer pool.Close()
 
-	// Crear instancia del repositorio con el pool de conexión
+	// Create an instance of the repository using the connection pool.
 	repo := &repository.Repository{Pool: pool}
 
-	// Crear instancia del caso de uso y pasar el repositorio
-	userUseCase := application.NewUserUseCase(repo) // Asume que tienes un caso de uso llamado "UserUseCase" en tu paquete application
+	// Instantiate a user use case by providing the previously created repository instance.
+	// Thanks to Golang's implicit interfaces, we can pass the new repo which implements the required interface.
+	userUseCase := application.NewUserUseCase(repo)
 
-	// Inicializar resolvers con el caso de uso
+	// Initialize resolvers with the use case.
 	resolvers := &resolvers2.Resolver{UserUseCase: userUseCase}
 
-	// Ahora, usa estos resolvers para tu servidor GraphQL
+	// Set up the resolvers for GraphQL.
+	// If additional resolvers are needed, instantiate more repository and use case instances, and initialize a new resolver.
 	srv := handler.NewDefaultServer(graph.NewExecutableSchema(graph.Config{Resolvers: resolvers}))
 
 	http.Handle("/", playground.Handler("GraphQL playground", "/query"))

@@ -1,9 +1,9 @@
 schema:
-  - infrastructure/graph/*.graphqls
+  - infrastructure/api/graph/typeDefs/*.graphqls
 
 exec:
-  filename: infrastructure/graph/generated.go
-  package: graph
+  filename: infrastructure/api/graph/generated/generated.go
+  package: generated
 
 model:
   filename: infrastructure/api/graph/model/models_gen.go
