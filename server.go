@@ -6,7 +6,7 @@ import (
 	"github.com/99designs/gqlgen/graphql/playground"
 	"github.com/joho/godotenv"
 	"go-gqlgen/application"
-	"go-gqlgen/infrastructure/db"
+	"go-gqlgen/infrastructure/db/connect"
 	graph "go-gqlgen/infrastructure/graph"
 	"go-gqlgen/infrastructure/repository"
 	"log"
@@ -23,7 +23,7 @@ func init() {
 
 func main() {
 	ctx := context.Background()
-	pool := db.Connect(ctx)
+	pool := connect.Connect(ctx)
 	defer pool.Close()
 
 	// Crear instancia del repositorio con el pool de conexión
