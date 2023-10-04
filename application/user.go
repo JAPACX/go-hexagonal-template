@@ -2,6 +2,7 @@ package application
 
 import (
 	"context"
+	"errors"
 	"go-gqlgen/domain/entities"
 	"go-gqlgen/domain/repositories"
 )
@@ -32,7 +33,11 @@ func (ui *UserUseCase) UpdateUser(ctx context.Context, id string, user entities.
 	return ui.repo.UpdateUser(ctx, id, user)
 }
 
-func (ui *UserUseCase) DeleteUser(ctx context.Context, id string) (string, error) {
+func (ui *UserUseCase) DeleteUser(ctx context.Context, id string) (bool, error) {
+
+	if id == "" {
+		return false, errors.New("missing user ID for delete")
+	}
 
 	return ui.repo.DeleteUser(ctx, id)
 }

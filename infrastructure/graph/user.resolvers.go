@@ -6,7 +6,6 @@ package graph
 
 import (
 	"context"
-	"fmt"
 	"go-gqlgen/domain/entities"
 	"go-gqlgen/infrastructure/graph/model"
 )
@@ -49,12 +48,12 @@ func (r *mutationResolver) UpdateUser(ctx context.Context, id string, input *mod
 }
 
 // DeleteUser is the resolver for the deleteUser field.
-func (r *mutationResolver) DeleteUser(ctx context.Context, id string) (string, error) {
+func (r *mutationResolver) DeleteUser(ctx context.Context, id string) (bool, error) {
 	_, err := r.UserUseCase.DeleteUser(ctx, id)
 	if err != nil {
-		return "", err
+		return false, err
 	}
-	return fmt.Sprintf("user with id %v deleted successfully", id), nil
+	return true, nil
 }
 
 // Users is the resolver for the users field.

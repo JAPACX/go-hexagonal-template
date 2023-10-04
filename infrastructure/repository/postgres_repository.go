@@ -77,18 +77,15 @@ func (r *Repository) UpdateUser(ctx context.Context, id string, user entities.Us
 	return nil
 }
 
-func (r *Repository) DeleteUser(ctx context.Context, id string) (string, error) {
-	if id == "" {
-		return "", errors.New("missing user ID for delete")
-	}
+func (r *Repository) DeleteUser(ctx context.Context, id string) (bool, error) {
 
 	query := `DELETE FROM users WHERE id = $1`
 	tag, err := r.Pool.Exec(ctx, query, id)
 	if err != nil {
-		return "", fmt.Errorf("error deleting user: %v", err)
+		return false, fmt.Errorf("error deleting user: %v", err)
 	}
 	if tag.RowsAffected() == 0 {
-		return "", errors.New("user not found")
+		return false, errors.New("user not found")
 	}
-	return id, nil
+	return true, nil
 }
