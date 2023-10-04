@@ -23,12 +23,12 @@ func (ui *UserUseCase) GetUserById(ctx context.Context, id string) (*entities.Us
 	return ui.repo.UserById(ctx, id)
 }
 
-func (ui *UserUseCase) CreateUser(ctx context.Context, user entities.User) (string, error) {
+func (ui *UserUseCase) CreateUser(ctx context.Context, user entities.User) (*entities.User, error) {
 
 	return ui.repo.CreateUser(ctx, user)
 }
 
-func (ui *UserUseCase) UpdateUser(ctx context.Context, id string, user entities.User) error {
+func (ui *UserUseCase) UpdateUser(ctx context.Context, id string, user entities.User) (*entities.User, error) {
 
 	return ui.repo.UpdateUser(ctx, id, user)
 }

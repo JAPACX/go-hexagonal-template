@@ -4,6 +4,7 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	"github.com/jackc/pgx/v5"
 	"github.com/jackc/pgx/v5/pgxpool"
 	"go-gqlgen/domain/entities"
 )
@@ -51,30 +52,39 @@ func (r *Repository) UserById(ctx context.Context, id string) (*entities.User, e
 	return &user, nil
 }
 
-func (r *Repository) CreateUser(ctx context.Context, user entities.User) (string, error) {
-	query := `INSERT INTO users (name, email) VALUES ($1, $2) RETURNING id`
-	var id string
-	err := r.Pool.QueryRow(ctx, query, user.Name, user.Email).Scan(&id)
+func (r *Repository) CreateUser(ctx context.Context, user entities.User) (*entities.User, error) {
+	query := `INSERT INTO users (name, email) VALUES ($1, $2) RETURNING id, name, email`
+	var newUser entities.User
+
+	err := r.Pool.QueryRow(ctx, query, user.Name, user.Email).Scan(&newUser.Id, &newUser.Name, &newUser.Email)
 	if err != nil {
-		return "", fmt.Errorf("error creating user: %v", err)
+		return nil, fmt.Errorf("error creating user: %v", err)
 	}
-	return id, nil
+
+	return &newUser, nil
 }
 
-func (r *Repository) UpdateUser(ctx context.Context, id string, user entities.User) error {
-	if id == "" {
-		return errors.New("missing user ID for update")
+func (r *Repository) UpdateUser(ctx context.Context, id string, user entities.User) (*entities.User, error) {
+
+	// Update the user data and fetch the updated data in the same query
+	query := `
+		UPDATE users 
+		SET name = $1, email = $2 
+		WHERE id = $3 
+		RETURNING id, name, email
+	`
+	row := r.Pool.QueryRow(ctx, query, user.Name, user.Email, id)
+
+	var updatedUser entities.User
+	err := row.Scan(&updatedUser.Id, &updatedUser.Name, &updatedUser.Email)
+	if err != nil {
+		if errors.Is(err, pgx.ErrNoRows) {
+			return nil, errors.New("user not found")
+		}
+		return nil, fmt.Errorf("error updating and fetching user: %v", err)
 	}
 
-	query := `UPDATE users SET name = $1, email = $2 WHERE id = $3`
-	tag, err := r.Pool.Exec(ctx, query, user.Name, user.Email, id)
-	if err != nil {
-		return fmt.Errorf("error updating user: %v", err)
-	}
-	if tag.RowsAffected() == 0 {
-		return errors.New("user not found")
-	}
-	return nil
+	return &updatedUser, nil
 }
 
 func (r *Repository) DeleteUser(ctx context.Context, id string) (bool, error) {

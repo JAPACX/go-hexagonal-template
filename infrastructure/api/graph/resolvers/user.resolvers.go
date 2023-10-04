@@ -18,15 +18,15 @@ func (r *mutationResolver) CreateUser(ctx context.Context, input model.NewUser) 
 		Email: input.Email,
 	}
 
-	id, err := r.UserUseCase.CreateUser(ctx, userToCreate)
+	newUser, err := r.UserUseCase.CreateUser(ctx, userToCreate)
 	if err != nil {
 		return nil, err
 	}
 
 	return &model.User{
-		ID:    id,
-		Name:  userToCreate.Name,
-		Email: userToCreate.Email,
+		ID:    newUser.Id,
+		Name:  newUser.Name,
+		Email: newUser.Email,
 	}, nil
 }
 
@@ -37,14 +37,15 @@ func (r *mutationResolver) UpdateUser(ctx context.Context, id string, input *mod
 		Email: *input.Email,
 	}
 
-	if err := r.UserUseCase.UpdateUser(ctx, id, userToUpdate); err != nil {
+	newInfo, err := r.UserUseCase.UpdateUser(ctx, id, userToUpdate)
+	if err != nil {
 		return nil, err
 	}
 
 	return &model.User{
 		ID:    id,
-		Name:  userToUpdate.Name,
-		Email: userToUpdate.Email,
+		Name:  newInfo.Name,
+		Email: newInfo.Email,
 	}, nil
 }
 
