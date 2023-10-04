@@ -7,6 +7,7 @@ import (
 	"github.com/99designs/gqlgen/graphql/playground"
 	"github.com/joho/godotenv"
 	"go-gqlgen/application"
+	resolvers2 "go-gqlgen/infrastructure/api/graph/resolvers"
 	"go-gqlgen/infrastructure/db/connect"
 	graph "go-gqlgen/infrastructure/graph"
 	"go-gqlgen/infrastructure/repository"
@@ -35,7 +36,7 @@ func main() {
 	userUseCase := application.NewUserUseCase(repo) // Asume que tienes un caso de uso llamado "UserUseCase" en tu paquete application
 
 	// Inicializar resolvers con el caso de uso
-	resolvers := &graph.Resolver{UserUseCase: userUseCase}
+	resolvers := &resolvers2.Resolver{UserUseCase: userUseCase}
 
 	// Ahora, usa estos resolvers para tu servidor GraphQL
 	srv := handler.NewDefaultServer(graph.NewExecutableSchema(graph.Config{Resolvers: resolvers}))

@@ -7,7 +7,8 @@ package graph
 import (
 	"context"
 	"go-gqlgen/domain/entities"
-	"go-gqlgen/infrastructure/graph/model"
+	"go-gqlgen/infrastructure/api/graph/model"
+	"go-gqlgen/infrastructure/graph"
 )
 
 // CreateUser is the resolver for the createUser field.
@@ -78,7 +79,6 @@ func (r *queryResolver) Users(ctx context.Context) ([]*model.User, error) {
 
 // UserByID is the resolver for the userById field.
 func (r *queryResolver) UserByID(ctx context.Context, id string) (*model.User, error) {
-
 	userEntity, err := r.UserUseCase.GetUserById(ctx, id)
 	if err != nil {
 		return nil, err
@@ -93,11 +93,11 @@ func (r *queryResolver) UserByID(ctx context.Context, id string) (*model.User, e
 	return mu, err
 }
 
-// Mutation returns MutationResolver implementation.
-func (r *Resolver) Mutation() MutationResolver { return &mutationResolver{r} }
+// Mutation returns graph.MutationResolver implementation.
+func (r *Resolver) Mutation() graph.MutationResolver { return &mutationResolver{r} }
 
-// Query returns QueryResolver implementation.
-func (r *Resolver) Query() QueryResolver { return &queryResolver{r} }
+// Query returns graph.QueryResolver implementation.
+func (r *Resolver) Query() graph.QueryResolver { return &queryResolver{r} }
 
 type mutationResolver struct{ *Resolver }
 type queryResolver struct{ *Resolver }
